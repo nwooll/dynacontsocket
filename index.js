@@ -7,6 +7,8 @@ var usernames = [];
 
 var msgs = [];
 
+var comments = [];
+
 var allRooms= {};
 
 var allStickers = {};
@@ -20,6 +22,12 @@ io.on("connection", function(socket){
         
         io.emit("usersjoined", usernames);
 
+    })
+	
+	socket.on("comment", function(data){
+        comments.push(data);
+        
+        io.emit("commentsjoined", comments);
     })
     
     socket.on("sendChat", function(data){
