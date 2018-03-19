@@ -19,6 +19,7 @@ io.on("connection", function(socket){
         usernames.push(data);
         
         io.emit("usersjoined", usernames);
+
     })
     
     socket.on("sendChat", function(data){
@@ -67,11 +68,46 @@ socket.on("mymove", function(data){
 
 	
 	socket.on("disconnect", function(){
-		var index = allRooms[this.myRoom].indexOf(socket.id);
-		allRooms[this.myRoom].splice(index, 1);
-		io.to(this.myRoom).emit("createimage", allRooms[this.myRoom]);
+	
 	});
 	
+
+
+//NEWNEWNEW
+
+socket.on("joinroom2", function(data){
+	socket.join(data);
+	socket.myRoom = data;
+	
+	if(!allRooms[data]){
+		allRooms[data] = {
+			users:[],
+			q:{}
+	};
+	}
+	console.log(data,"Join Room")
+});
+
+socket.on("qsubmit", function(data){
+	console.log(data);
+	allRooms[socket.myRoom].q = data;
+	socket.to(socket.myRoom).emit("newq", data);
+	
+});
+
+socket.on("answer", function(data){
+	var msg = "Wrong!"
+	
+	if(allRooms[socket.myRoom].q.a == data){
+		msg = "You Got it!";
+	}
+	socket.emit("result", msg)
+});	
+	
+socket.on("disconnect", function(){
+	
+});
+
 });
 
 server.listen(port, (err)=>{
